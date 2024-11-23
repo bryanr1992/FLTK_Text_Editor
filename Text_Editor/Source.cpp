@@ -80,7 +80,7 @@ void set_filename(const char* new_filename)
 
 void menu_quit_callback(Fl_Widget*, void*)
 {
-	/* TODO */
+	Fl::hide_all_windows();
 }
 
 void build_menu_bar()
