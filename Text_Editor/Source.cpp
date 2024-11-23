@@ -19,13 +19,19 @@ Fl_Menu_Bar* app_menu_bar = NULL;
 bool text_changed = false;
 char app_filename[FL_PATH_MAX] = "";
 
+
+void build_window()
+{
+	app_window = new Fl_Double_Window(640, 480, "Title");
+}
+
 //Update the title if the text changes
 void update_title()
 {
 	const char* fname = NULL;
 	if (app_filename[0])
 	{
-		fname = fl_filename_name(app_filename)
+		fname = fl_filename_name(app_filename);
 	}
 	if (fname)
 	{
@@ -37,7 +43,7 @@ void update_title()
 		}
 		else
 		{
-			snprintf(buf, FL_PATH_MAX + 2, "%s", fname)
+			snprintf(buf, FL_PATH_MAX + 2, "%s", fname);
 		}
 
 		app_window->copy_label(buf);
@@ -54,7 +60,7 @@ void set_changed(bool v)
 	if (v != text_changed)
 	{
 		text_changed = v;
-		update_title()''
+		update_title();
 	}
 }
 
@@ -72,9 +78,25 @@ void set_filename(const char* new_filename)
 	update_title();
 }
 
-/*
-void test_window()
+void menu_quit_callback(Fl_Widget*, void*)
 {
-	app_window = new Fl_Double_Window(640, 480, "Title");
-}*/
+	/* TODO */
+}
+
+void build_menu_bar()
+{
+	app_window->begin();
+	app_menu_bar = new Fl_Menu_Bar(0, 0, app_window->w(), 25);
+	app_menu_bar->add("File/Quit Editor", FL_COMMAND + 'q', menu_quit_callback);
+	app_window->callback(menu_quit_callback);
+	app_window->end();
+}
+
+int main()
+{
+	build_window();
+	build_menu_bar();
+	app_window->show();
+	return Fl::run();
+}
 
