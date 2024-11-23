@@ -80,6 +80,14 @@ void set_filename(const char* new_filename)
 
 void menu_quit_callback(Fl_Widget*, void*)
 {
+	if (text_changed)
+	{
+		int c = fl_choice("YOur changes have not been saved.\n"
+			"Do you still want to quit?",
+			"Quit", "Cancel", NULL);
+
+		if (c == 1) { return; }
+	}
 	Fl::hide_all_windows();
 }
 
