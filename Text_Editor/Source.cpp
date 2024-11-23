@@ -15,17 +15,66 @@
 
 
 Fl_Double_Window* app_window = NULL;
+Fl_Menu_Bar* app_menu_bar = NULL;
+bool text_changed = false;
+char app_filename[FL_PATH_MAX] = "";
 
+//Update the title if the text changes
+void update_title()
+{
+	const char* fname = NULL;
+	if (app_filename[0])
+	{
+		fname = fl_filename_name(app_filename)
+	}
+	if (fname)
+	{
+		char buf[FL_PATH_MAX + 3];
 
+		if (text_changed)
+		{
+			snprintf(buf, FL_PATH_MAX + 2, "%s *", fname);
+		}
+		else
+		{
+			snprintf(buf, FL_PATH_MAX + 2, "%s", fname)
+		}
+
+		app_window->copy_label(buf);
+	}
+	else
+	{
+		app_window->label("Custom Editor");
+	}
+}
+
+// Sets the text_changed flag and updates title
+void set_changed(bool v)
+{
+	if (v != text_changed)
+	{
+		text_changed = v;
+		update_title()''
+	}
+}
+
+//Sets new filename and updates title
+void set_filename(const char* new_filename)
+{
+	if (new_filename)
+	{
+		fl_strlcpy(app_filename, new_filename, FL_PATH_MAX);
+	}
+	else
+	{
+		app_filename[0] = 0;
+	}
+	update_title();
+}
+
+/*
 void test_window()
 {
 	app_window = new Fl_Double_Window(640, 480, "Title");
-}
+}*/
 
-
-int main()
-{
-	test_window();
-	app_window->show();
-	return Fl::run();
-}
