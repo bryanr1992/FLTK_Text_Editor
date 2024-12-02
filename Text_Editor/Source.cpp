@@ -6,6 +6,12 @@
 #include <FL/filename.H>
 #include<FL/fl_string_functions.h>
 
+/*
+* Text Editor widgets
+*/
+#include <FL/Fl_Text_Buffer.H>
+#include <FL/Fl_Text_Editor.H>
+
 #include <Windows.h>
 #include <gdiplus.h>
 #include <objidl.h>
@@ -18,6 +24,14 @@ Fl_Double_Window* app_window = NULL;
 Fl_Menu_Bar* app_menu_bar = NULL;
 bool text_changed = false;
 char app_filename[FL_PATH_MAX] = "";
+
+/*
+* For editor widget
+*/
+
+Fl_Text_Buffer* app_text_buffer = NULL;
+Fl_Text_Editor* app_editor = NULL;
+Fl_Text_Editor* app_split_editor = NULL;
 
 
 void build_window()
@@ -100,10 +114,44 @@ void build_menu_bar()
 	app_window->end();
 }
 
+void text_changed_callback(int, int n_inserted, int n_deleted, int, const char*, void*)
+{
+	if (n_inserted || n_deleted)
+	{
+		set_changed(true);
+	}
+}
+
+void menu_new_callback(Fl_Widget*, void*)
+{
+	app_text_buffer->text("");
+	set_changed(false);
+}
+
+void build_editor()
+{
+	app_window->begin();
+	app_text_buffer = new Fl_Text_Buffer();
+	app_text_buffer->add_modify_callback(text_changed_callback, NULL);
+	app_editor = new Fl_Text_Editor(0, app_menu_bar->h(), app_window->w(), 
+		app_window->h() - app_menu_bar->h());
+	app_editor->buffer(app_text_buffer);
+	app_editor->textfont(FL_COURIER);
+	app_window->resizable(app_editor);
+	
+	//add the 'New' menu element
+	int ix = app_menu_bar->find_index(menu_quit_callback);
+	app_menu_bar->insert(ix, "New", FL_COMMAND + 'n', menu_quit_callback);
+
+	app_window->end();
+
+}
+
 int main()
 {
 	build_window();
 	build_menu_bar();
+	build_editor();
 	app_window->show();
 	return Fl::run();
 }
